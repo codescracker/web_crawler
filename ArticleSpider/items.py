@@ -38,7 +38,7 @@ def get_nums(value):
 
 
 def tag_filter(value):
-    if value!='评论':
+    if '评论' not in value:
         return value
     else:
         return ''
@@ -77,7 +77,7 @@ class JobboleArticleItem(scrapy.Item):
     )
     tag = scrapy.Field(
         input_processor=MapCompose(tag_filter),
-        output_processor=Join()
+        output_processor=Join(',')
     )
 
     front_img_url = scrapy.Field()
