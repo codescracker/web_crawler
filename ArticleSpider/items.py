@@ -7,7 +7,8 @@
 
 import scrapy
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
-from ArticleSpider.utils.common import get_md5
+from ArticleSpider.utils.common import get_md5, get_nums, date_converter
+from ArticleSpider.settings import SQL_DATETIME_FORMAT, SQL_DATE_FORMAT
 
 import re
 import datetime
@@ -17,24 +18,6 @@ class ArticlespiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
-
-
-def date_converter(value):
-    try:
-        create_date = datetime.datetime.strptime(value, '%Y/%m/%d').date()
-    except Exception as e:
-        create_date = datetime.datetime.now().date()
-
-    return create_date
-
-
-def get_nums(value):
-    pattern = r'.*?(\d+).*'
-    match = re.match(pattern, value)
-    if match:
-        return int(match.group(1))
-    else:
-        return 0
 
 
 def tag_filter(value):
@@ -82,3 +65,92 @@ class JobboleArticleItem(scrapy.Item):
 
     front_img_url = scrapy.Field()
     front_img_path = scrapy.Field()
+
+    def get_insert_sql(self):
+
+        insert_sql = """ INSERT INTO jobbole_article(title, url, create_date, url_object_id, front_image_url,
+                front_image_path, thumb_up, save_num, comment_num, content, tag )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE save_num=VALUES(save_num), comment_num = VALUES(comment_num)"""
+
+        values = (self['title'], self['url'], self['create_date'], self['url_object_id'], self['front_img_url'][0],
+                  self['front_img_path'], self['thumb_up'], self['save_num'], self['comment_num'], self['content'],
+                  self['tag'])
+
+        return insert_sql, values
+
+
+class ZhihuQuestionItem(scrapy.Item):
+    zhihu_id = scrapy.Field()
+    topics = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    answer_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    watch_user_num = scrapy.Field()
+    click_num = scrapy.Field()
+    crawl_time = scrapy.Field()
+    crawl_update_time = scrapy.Field()
+
+    def get_insert_sql(self):
+
+        # need to process the raw data before get into the pipeline
+        zhihu_id = self['zhihu_id'][0]
+        topics = ','.join(self['topics'])
+        url = self['url'][0]
+        title = self['title'][0]
+        content = self['content'][0]
+        answer_num = get_nums(''.join(self['answer_num']))
+        comments_num = get_nums(''.join(self['comments_num']))
+        if len(self['watch_user_num'][0])==2:
+            watch_user_num = int(self['watch_user_num'][0])
+            click_num = int(self['watch_user_num'][1])
+        else:
+            watch_user_num = int(self['watch_user_num'][0])
+            click_num = 0
+
+        crawl_time = datetime.datetime.now().strftime(SQL_DATETIME_FORMAT)
+
+        insert_sql = """ INSERT INTO zhihu_question(zhihu_id, topics, url, title, content,
+                answer_num, comments_num, watch_user_num, click_num,crawl_time)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE answer_num=VALUES(answer_num), comments_num=VALUES(comments_num),
+                watch_user_num = VALUES(watch_user_num), click_num = VALUES(click_num), crawl_time =VALUES(crawl_time)"""
+
+        values = (zhihu_id, topics, url, title, content, answer_num, comments_num, watch_user_num, click_num, crawl_time)
+
+        return insert_sql, values
+
+
+class ZhihuAnswerItem(scrapy.Item):
+    zhihu_id = scrapy.Field()
+    url = scrapy.Field()
+    question_id= scrapy.Field()
+    author_id = scrapy.Field()
+    content = scrapy.Field()
+    praise_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    create_time = scrapy.Field()
+    update_time = scrapy.Field()
+    crawl_time = scrapy.Field()
+    crawl_update_time = scrapy.Field()
+
+    def get_insert_sql(self):
+
+        insert_sql = """ INSERT INTO zhihu_answer(zhihu_id, url, question_id, author_id,
+                content, praise_num, comments_num, create_time, update_time, crawl_time)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE praise_num=VALUES(praise_num), comments_num=VALUES(comments_num)"""
+
+        values = (self['zhihu_id'], self['url'], self['question_id'], self['author_id'], self['content'],
+                  self['praise_num'], self['comments_num'],
+                  datetime.datetime.fromtimestamp(self['create_time']).strftime(SQL_DATETIME_FORMAT),
+                  datetime.datetime.fromtimestamp(self['update_time']).strftime(SQL_DATETIME_FORMAT),
+                  self['crawl_time'].strftime(SQL_DATETIME_FORMAT))
+
+        return insert_sql, values
+
+
+
+

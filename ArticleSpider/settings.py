@@ -104,3 +104,8 @@ DB_PORT = 3306
 DB_USER = 'root'
 DB_PASSWD = 'root'
 DB_DB = 'spider'
+
+
+# Configuration for date format in MySQL
+SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+SQL_DATE_FORMAT = "%Y-%m-%d"

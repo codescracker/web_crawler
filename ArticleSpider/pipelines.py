@@ -105,13 +105,7 @@ class MysqlTwistedPipeline(object):
             print(e)
 
         def _insert_record(self, cursor, item):
-            insert_sql = """ INSERT INTO jobbole_article(title, url, create_date, url_object_id, front_image_url,
-                    front_image_path, thumb_up, save_num, comment_num, content, tag )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-
-            values = (item['title'], item['url'], item['create_date'], item['url_object_id'], item['front_img_url'][0],
-                      item['front_img_path'], item['thumb_up'], item['save_num'], item['comment_num'], item['content'],
-                      item['tag'])
+            insert_sql, values = item.get_insert_sql()
 
             result = cursor.execute(insert_sql, values)
 

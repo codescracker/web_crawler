@@ -23,7 +23,7 @@ class JobboleSpider(scrapy.Spider):
                           callback=self.parse_detail)
 
         next_page_url = response.xpath(
-            "//div[contains(@class, 'navigation')]//a[contains(@class,'next' )]/@href").extract_first()
+            "//div[contains(@class, 'navigation')]//a[contains(@class,'next' )]/@href").extract_first('')
         if next_page_url:
             yield Request(url=parse.urljoin(response.url, next_page_url), callback=self.parse)
 
