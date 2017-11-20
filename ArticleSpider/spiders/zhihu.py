@@ -102,7 +102,6 @@ class ZhihuSpider(scrapy.Spider):
                 yield scrapy.Request(url=question_url, headers= self.header, callback=self.parse_question, meta={'question_id': question_id})
 
             else:
-                pass
                 yield scrapy.Request(url=url, headers= self.header, callback=self.parse)
 
     def parse_question(self, response):
