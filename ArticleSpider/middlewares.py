@@ -6,6 +6,8 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from fake_useragent import UserAgent
+from ArticleSpider.tools.crawl_proxy_ip import GetIP
 
 
 class ArticlespiderSpiderMiddleware(object):
@@ -54,3 +56,30 @@ class ArticlespiderSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class RandomAgentDownloadMiddleware(object):
+    def __init__(self, crawler):
+        super(RandomAgentDownloadMiddleware, self).__init__()
+        self.ua = UserAgent()
+        self.ua_type = crawler.settings.get('USER_AGENT_TYPE', 'random')
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def process_request(self, request, spider):
+
+        def get_agent(agent_type):
+            return getattr(self.ua, agent_type)
+
+        agent = get_agent(self.ua_type)
+        request.headers.setdefault(b'User-Agent', agent)
+
+
+class RandomProxyDownloadMiddleware(object):
+    def process_request(self, request, spider):
+        random_proxy = GetIP()
+        proxy = random_proxy.get_random_ip()
+        print('veriflied proxy is ', proxy)
+        request.meta['proxy'] = proxy

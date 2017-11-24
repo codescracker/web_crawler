@@ -11,13 +11,14 @@ import datetime
 
 
 class LagouSpider(CrawlSpider):
-    header = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
-    }
+    # header = {
+    #     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
+    # }
 
     name = 'lagou'
     allowed_domains = ['www.lagou.com']
     start_urls = ['https://www.lagou.com/']
+    proxy = 'http://202.9.104.10:80'
 
     rules = (
 
@@ -27,13 +28,17 @@ class LagouSpider(CrawlSpider):
     )
 
     def _build_request(self, rule, link):
-        r = scrapy.Request(url=link.url, callback=self._response_downloaded, headers=self.header)
+        r = scrapy.Request(url=link.url, callback=self._response_downloaded)
         r.meta.update(rule=rule, link_text=link.text)
+        # r.meta['proxy'] = self.proxy
         return r
 
     def start_requests(self):
         for url in self.start_urls:
-            yield scrapy.Request(url, dont_filter=True, headers=self.header)
+            r = scrapy.Request(url, dont_filter=True)
+            # r.meta['proxy'] = self.proxy
+            # yield scrapy.Request(url, dont_filter=True)
+            yield r
 
     def parse_job(self, response):
         job_loader = ItemLoader(item=LagouJobItem(), response=response)

@@ -53,9 +53,13 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'ArticleSpider.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'ArticleSpider.middlewares.RandomAgentDownloadMiddleware': 1,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 100,
+    'ArticleSpider.middlewares.RandomProxyDownloadMiddleware': 110
+}
+USER_AGENT_TYPE = 'random'
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
