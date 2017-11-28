@@ -90,8 +90,8 @@ class MysqlTwistedPipeline(object):
                             db=settings['DB_DB'],
                             charset='utf8',
                             use_unicode=True,
-                            cursorclass=MySQLdb.cursors.DictCursor
-                            )
+                            cursorclass=MySQLdb.cursors.DictCursor,
+                            cp_reconnect=True)
             dbpool = adbapi.ConnectionPool("MySQLdb", **db_param)
 
             return cls(dbpool)

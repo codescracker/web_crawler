@@ -14,6 +14,7 @@ import re
 import datetime
 from w3lib.html import remove_tags
 
+
 class ArticlespiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
@@ -223,6 +224,64 @@ class LagouJobItem(scrapy.Item):
                   self['crawl_time'])
 
         return insert_sql, values
+
+
+class CarFaxItem(scrapy.Item):
+    dealer_id = scrapy.Field()
+    dealer_name = scrapy.Field()
+    dealer_city =scrapy.Field()
+    dealer_state =scrapy.Field()
+
+    car_vin =scrapy.Field()
+    car_year =scrapy.Field()
+    car_make =scrapy.Field()
+    car_topOptions =scrapy.Field()
+    car_model =scrapy.Field()
+    car_trim =scrapy.Field()
+    car_mileage =scrapy.Field()
+    car_list_price =scrapy.Field()
+    car_current_price =scrapy.Field()
+    car_exteriorColor =scrapy.Field()
+    car_interiorColor =scrapy.Field()
+    car_engine =scrapy.Field()
+    car_displacement =scrapy.Field()
+    car_drivetype =scrapy.Field()
+    car_transmission =scrapy.Field()
+    car_fuel =scrapy.Field()
+    car_mpgCity =scrapy.Field()
+    car_mpgHighway =scrapy.Field()
+    car_mpgCombined =scrapy.Field()
+    car_bodytype =scrapy.Field()
+    car_oneOwner =scrapy.Field()
+    car_noAccidents =scrapy.Field()
+    car_serviceRecords =scrapy.Field()
+    car_personalUse =scrapy.Field()
+
+    crawl_time =scrapy.Field()
+
+    def get_insert_sql(self):
+
+        insert_sql = """ INSERT INTO carfax(dealer_id, dealer_name, dealer_city, dealer_state,
+                car_vin, car_year, car_make, car_topOptions, car_model, car_trim, car_mileage,
+                car_list_price, car_current_price, car_exteriorColor, car_interiorColor, car_engine,
+                car_displacement, car_drivetype, car_transmission, car_fuel, car_mpgCity, car_mpgHighway,
+                car_mpgCombined, car_bodytype, car_oneOwner, car_noAccidents, car_serviceRecords, car_personalUse,
+                crawl_time)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                         %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE car_current_price=VALUES(car_current_price)"""
+
+        values = (self['dealer_id'], self['dealer_name'], self['dealer_city'], self['dealer_state'],
+                  self['car_vin'], self['car_year'], self['car_make'], self['car_topOptions'], self['car_model'],
+                  self['car_trim'], self['car_mileage'], self['car_list_price'], self['car_current_price'],
+                  self['car_exteriorColor'], self['car_interiorColor'], self['car_engine'], self['car_displacement'],
+                  self['car_drivetype'], self['car_transmission'], self['car_fuel'], self['car_mpgCity'], self['car_mpgHighway'],
+                  self['car_mpgCombined'], self['car_bodytype'], self['car_oneOwner'], self['car_noAccidents'],
+                  self['car_serviceRecords'], self['car_personalUse'], self['crawl_time'])
+
+        return insert_sql, values
+
+
 
 
 
