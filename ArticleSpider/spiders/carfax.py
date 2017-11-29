@@ -13,7 +13,7 @@ class CarfaxSpider(scrapy.Spider):
     start_urls = ['https://www.carfax.com/cars-for-sale/']
 
     def start_requests(self):
-        browser = webdriver.Chrome()
+        browser = webdriver.PhantomJS()
         make_urls = []
 
         for start_url in self.start_urls:

@@ -4,8 +4,8 @@ import MySQLdb
 import time
 import schedule
 
-mysql_connector = MySQLdb.connect(host='159.203.72.236',
-                                  port=3306, user='root', passwd='root',
+mysql_connector = MySQLdb.connect(host='spider.c0kwpumescj5.us-east-1.rds.amazonaws.com',
+                                  port=3306, user='root', passwd='Zuoqian690712',
                                   db='spider')
 
 cursor = mysql_connector.cursor()

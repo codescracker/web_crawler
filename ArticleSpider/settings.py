@@ -103,10 +103,10 @@ AUTOTHROTTLE_DEBUG = False
 
 
 # Configuration for MySQL database
-DB_HOST = '159.203.72.236'
+DB_HOST = 'spider.c0kwpumescj5.us-east-1.rds.amazonaws.com'
 DB_PORT = 3306
 DB_USER = 'root'
-DB_PASSWD = 'root'
+DB_PASSWD = 'Zuoqian690712'
 DB_DB = 'spider'
 
 

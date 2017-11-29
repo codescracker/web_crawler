@@ -63,9 +63,19 @@ class JsonExporterPipeline(object):
 
 class MysqlPipeline(object):
     #采用同步的机制写入mysql
-    def __init__(self):
-        self.conn = MySQLdb.connect('159.203.72.236', 'root', 'root', 'spider', charset="utf8", use_unicode=True)
+    def __init__(self,host, port, user,password, db):
+        self.conn = MySQLdb.connect(host, user, password, db, charset="utf8", use_unicode=True)
         self.cursor = self.conn.cursor()
+
+    @classmethod
+    def from_settings(cls, settings):
+        host=settings['DB_HOST'],
+        port=settings['DB_PORT'],
+        user=settings['DB_USER'],
+        password=settings['DB_PASSWD'],
+        db=settings['DB_DB']
+
+        return cls(host, port, user, password, db)
 
     def process_item(self, item, spider):
         insert_sql = """
