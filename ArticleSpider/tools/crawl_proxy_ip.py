@@ -158,6 +158,7 @@ class GetIP(object):
 
 if __name__ == '__main__':
     # crawl_xci_ips()
+    crawl_free_proxy()
     schedule.every(10).minutes.do(crawl_free_proxy)
     while True:
         schedule.run_pending()
